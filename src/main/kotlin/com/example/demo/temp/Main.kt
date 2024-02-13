@@ -1,3 +1,5 @@
+package com.example.demo.temp
+
 fun main() {
     var num: Int = 5
     var numLong = num.toLong()
