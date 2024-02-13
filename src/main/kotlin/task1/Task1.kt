@@ -1,5 +1,5 @@
 fun main() {
-// solution 1
+    // solution 1
     var price = 19.99
     price = 29.99
     println(price)
