@@ -1,0 +1,145 @@
+// solution 1
+@Repository
+interface ProductRepository : JpaRepository<Product, Long> {
+    fun findByPriceGreaterThan(price: Double): List<Product>
+}
+
+// solution 2
+@Entity
+@Table(name = "orders")
+data class Order(
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "order_id")
+    val orderId: Long = 0,
+
+    @Column(name = "customer_id")
+    val customerId: Long,
+
+    @Column(name = "order_date")
+    val orderDate: LocalDate
+)
+
+@Repository
+interface OrderRepository : JpaRepository<Order, Long> {
+    @Query("SELECT o.customerId, COUNT(o) AS orderCount FROM Order o GROUP BY o.customerId ORDER BY orderCount DESC")
+    fun findOrderCountByCustomer(): List<Any>
+}
+
+// solution 3
+@Entity
+@Table(name = "students")
+data class Student(
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    val id: Long = 0,
+
+    val name: String,
+
+    @ManyToMany(fetch = FetchType.LAZY, cascade = [CascadeType.ALL])
+    @JoinTable(
+        name = "student_course",
+        joinColumns = [JoinColumn(name = "student_id", referencedColumnName = "id")],
+        inverseJoinColumns = [JoinColumn(name = "course_id", referencedColumnName = "id")]
+    )
+    val courses: MutableSet<Course> = mutableSetOf()
+)
+
+@Entity
+@Table(name = "courses")
+data class Course(
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    val id: Long = 0,
+
+    val name: String,
+
+    @ManyToMany(mappedBy = "courses", fetch = FetchType.LAZY)
+    val students: MutableSet<Student> = mutableSetOf()
+)
+
+@Repository
+interface StudentRepository : JpaRepository<Student, Long>
+
+@Repository
+interface CourseRepository : JpaRepository<Course, Long> {
+    fun findByName(name: String): Course?
+}
+
+// Retrieving a list of students enrolled in a specific course by specifying the course name
+val enrolledStudents = courseRepository.findByName("Mathematics")?.students
+println("Students enrolled in Mathematics course: $enrolledStudents")
+
+// solution 4
+@Repository
+interface EnrollmentRepository : JpaRepository<Student, Long> {
+
+    @Query("""
+        SELECT s.name, c.name FROM Student s
+        LEFT JOIN s.courses c
+    """)
+    fun findStudentsAndCourses(): List<Array<Any>>
+}
+
+val enrollmentData = enrollmentRepository.findStudentsAndCourses()
+enrollmentData.forEach { (studentName, courseName) ->
+     println("Student: $studentName, Course: $courseName")
+}
+
+// solution 5
+@Table(name = "employees")
+data class Employee(
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    val id: Long = 0,
+
+    val name: String,
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "department_id")
+    val department: Department,
+
+    @ManyToMany(mappedBy = "employees", fetch = FetchType.LAZY)
+    val projects: MutableSet<Project> = mutableSetOf()
+)
+
+@Entity
+@Table(name = "departments")
+data class Department(
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    val id: Long = 0,
+
+    val name: String,
+
+    @OneToMany(mappedBy = "department", fetch = FetchType.LAZY)
+    val employees: MutableSet<Employee> = mutableSetOf()
+)
+
+@Entity
+@Table(name = "projects")
+data class Project(
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    val id: Long = 0,
+
+    val name: String,
+
+    @ManyToMany(fetch = FetchType.LAZY)
+    @JoinTable(
+        name = "employee_project",
+        joinColumns = [JoinColumn(name = "project_id", referencedColumnName = "id")],
+        inverseJoinColumns = [JoinColumn(name = "employee_id", referencedColumnName = "id")]
+    )
+    val employees: MutableSet<Employee> = mutableSetOf()
+)
+
+@Repository
+interface ProjectRepository : JpaRepository<Project, Long> {
+
+    @Query("SELECT p.employees FROM Project p WHERE p.name = :projectName")
+    fun findEmployeesByProjectName(projectName: String): Set<Employee>
+}
+
+val employees = projectRepository.findEmployeesByProjectName("expedia")
+println("employees: $employees")
