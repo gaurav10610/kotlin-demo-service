@@ -87,6 +87,7 @@ enrollmentData.forEach { (studentName, courseName) ->
 }
 
 // solution 5
+@Entity
 @Table(name = "employees")
 data class Employee(
     @Id
