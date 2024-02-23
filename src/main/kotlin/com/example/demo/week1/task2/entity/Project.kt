@@ -1,6 +1,5 @@
-package com.example.demo.task2.entity
+package com.example.demo.week1.task2.entity
 
-import jakarta.persistence.CascadeType
 import jakarta.persistence.Entity
 import jakarta.persistence.FetchType
 import jakarta.persistence.GeneratedValue
@@ -12,19 +11,19 @@ import jakarta.persistence.ManyToMany
 import jakarta.persistence.Table
 
 @Entity
-@Table(name = "students")
-data class Student(
+@Table(name = "projects")
+data class Project(
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     val id: Long = 0,
 
     val name: String,
 
-    @ManyToMany(fetch = FetchType.LAZY, cascade = [CascadeType.ALL])
+    @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(
-        name = "student_course",
-        joinColumns = [JoinColumn(name = "student_id", referencedColumnName = "id")],
-        inverseJoinColumns = [JoinColumn(name = "course_id", referencedColumnName = "id")]
+        name = "employee_project",
+        joinColumns = [JoinColumn(name = "project_id", referencedColumnName = "id")],
+        inverseJoinColumns = [JoinColumn(name = "employee_id", referencedColumnName = "id")]
     )
-    val courses: MutableSet<Course> = mutableSetOf()
+    val employees: MutableSet<Employee> = mutableSetOf()
 )

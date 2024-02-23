@@ -1,4 +1,4 @@
-package com.example.demo.task2.entity
+package com.example.demo.week1.task2.entity
 
 import jakarta.persistence.*
 import java.time.LocalDate

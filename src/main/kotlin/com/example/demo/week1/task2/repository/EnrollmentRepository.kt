@@ -1,6 +1,6 @@
-package com.example.demo.task2.repository
+package com.example.demo.week1.task2.repository
 
-import com.example.demo.task2.entity.Student
+import com.example.demo.week1.task2.entity.Student
 import org.springframework.data.jpa.repository.JpaRepository
 import org.springframework.data.jpa.repository.Query
 import org.springframework.stereotype.Repository
