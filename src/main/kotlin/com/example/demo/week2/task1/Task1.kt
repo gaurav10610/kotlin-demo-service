@@ -55,17 +55,17 @@ fun solution2() {
  * solution 3
  */
 fun solution3() {
+    suspend fun myCoroutine() {
+        delay(2000L)
+        println("Task Completed")
+    }
+
     val job = GlobalScope.launch(Dispatchers.Default) {
         async { myCoroutine() }
     }
     runBlocking {
         job.join()
     }
-}
-
-suspend fun myCoroutine() {
-    delay(2000L)
-    println("Task Completed")
 }
 
 /**
@@ -91,6 +91,12 @@ fun solution4() {
  * solution 5
  */
 fun solution5() {
+    fun <T> swapElements(list: MutableList<T>, index1: Int, index2: Int) {
+        val temp = list[index1]
+        list[index1] = list[index2]
+        list[index2] = temp
+    }
+
     // Test with a list of strings
     val stringList = mutableListOf("apple", "banana", "orange", "grape")
     println("Before swapping: $stringList")
@@ -102,12 +108,6 @@ fun solution5() {
     println("Before swapping: $intList")
     swapElements(intList, 0, 4)
     println("After swapping: $intList")
-}
-
-fun <T> swapElements(list: MutableList<T>, index1: Int, index2: Int) {
-    val temp = list[index1]
-    list[index1] = list[index2]
-    list[index2] = temp
 }
 
 /**
