@@ -1,4 +1,9 @@
 spring:
+  data:
+    mongodb:
+      database: myfirstmongodb
+      host: localhost
+      port: 27017
   h2:
     console.enabled: true
   datasource:
